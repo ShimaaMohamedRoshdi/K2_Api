@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>AccountDocApi</name>
+    </assembly>
+    <members>
+        <member name="M:AccountDocApi.Controllers.AccountsController.GetAccountByNo(System.String)">
+            <summary>
+            Retrieves Account and Customer information for a given Account Number.
+            </summary>
+            <param name="accountNo">The Account Number to look up (e.g. ACC1001)</param>
+            <returns>Account details mapped for Nintex integration</returns>
+        </member>
+        <member name="M:AccountDocApi.Controllers.DocumentsController.GetSignatureDocument(System.String)">
+            <summary>
+            Retrieves the Signature document for the specified Account Number with Base64-encoded file content for Nintex mapping.
+            </summary>
+            <param name="accountNo">The Account Number associated with the signature document (e.g. ACC1001)</param>
+            <returns>JSON object containing Document metadata and Base64 encoded file string</returns>
+        </member>
+        <member name="T:AccountDocApi.DTOs.AccountDto">
+            <summary>
+            Represents the Account and Customer information returned to Nintex / API clients.
+            </summary>
+        </member>
+        <member name="P:AccountDocApi.DTOs.AccountDto.AccountNo">
+            <summary>
+            Unique Account Number
+            </summary>
+        </member>
+        <member name="P:AccountDocApi.DTOs.AccountDto.CustomerId">
+            <summary>
+            Customer Identifier
+            </summary>
+        </member>
+        <member name="P:AccountDocApi.DTOs.AccountDto.CustomerName">
+            <summary>
+            Full Name of the Customer
+            </summary>
+        </member>
+        <member name="P:AccountDocApi.DTOs.AccountDto.AccountType">
+            <summary>
+            Type of Account (e.g. Savings, Checking, Corporate)
+            </summary>
+        </member>
+        <member name="P:AccountDocApi.DTOs.AccountDto.AccountStatus">
+            <summary>
+            Current status of the Account (e.g. Active, Pending, Suspended)
+            </summary>
+        </member>
+        <member name="P:AccountDocApi.DTOs.AccountDto.Branch">
+            <summary>
+            Branch name where account is registered
+            </summary>
+        </member>
+        <member name="T:AccountDocApi.DTOs.DocumentSignatureDto">
+            <summary>
+            Represents the Document Signature record with Base64-encoded binary content wrapped in a standard JSON object for Nintex mapping.
+            </summary>
+        </member>
+        <member name="P:AccountDocApi.DTOs.DocumentSignatureDto.DocumentId">
+            <summary>
+            Unique Document ID
+            </summary>
+        </member>
+        <member name="P:AccountDocApi.DTOs.DocumentSignatureDto.AccountNo">
+            <summary>
+            Account Number associated with this signature document
+            </summary>
+        </member>
+        <member name="P:AccountDocApi.DTOs.DocumentSignatureDto.DocumentType">
+            <summary>
+            Type of document (e.g. Signature)
+            </summary>
+        </member>
+        <member name="P:AccountDocApi.DTOs.DocumentSignatureDto.DocumentName">
+            <summary>
+            Document Name
+            </summary>
+        </member>
+        <member name="P:AccountDocApi.DTOs.DocumentSignatureDto.DocumentUrl">
+            <summary>
+            External or Storage URL of the document
+            </summary>
+        </member>
+        <member name="P:AccountDocApi.DTOs.DocumentSignatureDto.CreatedDate">
+            <summary>
+            Timestamp when document was created
+            </summary>
+        </member>
+        <member name="P:AccountDocApi.DTOs.DocumentSignatureDto.FileDataBase64">
+            <summary>
+            Base64 encoded file attachment content wrapped inside standard JSON object for Nintex database buffer processing
+            </summary>
+        </member>
+        <member name="P:AccountDocApi.DTOs.DocumentSignatureDto.FileName">
+            <summary>
+            Original filename for Nintex binary file creation
+            </summary>
+        </member>
+        <member name="P:AccountDocApi.DTOs.DocumentSignatureDto.ContentType">
+            <summary>
+            MIME Content Type (e.g. image/png, application/pdf)
+            </summary>
+        </member>
+        <member name="P:AccountDocApi.Models.Document.FileContent">
+            <summary>
+            Stores the raw binary file content in PostgreSQL bytea column.
+            </summary>
+        </member>
+    </members>
+</doc>
