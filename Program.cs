@@ -65,8 +65,11 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Enable Swagger UI
-app.UseSwagger();
+// Enable Swagger UI with Swagger 2.0 spec for Nintex/K2 compatibility
+app.UseSwagger(c =>
+{
+    c.SerializeAsV2 = true;
+});
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Account & Document API v1");
