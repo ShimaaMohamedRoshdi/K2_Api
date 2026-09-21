@@ -10,6 +10,9 @@
   "schemes": [
     "https"
   ],
+  "consumes": [
+    "application/json"
+  ],
   "produces": [
     "application/json"
   ],
@@ -37,7 +40,34 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/AccountDto"
+              "type": "object",
+              "title": "AccountDto",
+              "properties": {
+                "accountNo": {
+                  "type": "string",
+                  "description": "Unique Account Number"
+                },
+                "customerId": {
+                  "type": "string",
+                  "description": "Customer Identifier"
+                },
+                "customerName": {
+                  "type": "string",
+                  "description": "Full Name of the Customer"
+                },
+                "accountType": {
+                  "type": "string",
+                  "description": "Type of Account (e.g. Savings, Checking, Corporate)"
+                },
+                "accountStatus": {
+                  "type": "string",
+                  "description": "Current status of the Account (e.g. Active, Pending, Suspended)"
+                },
+                "branch": {
+                  "type": "string",
+                  "description": "Branch name where account is registered"
+                }
+              }
             }
           }
         }
@@ -66,7 +96,48 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/DocumentSignatureDto"
+              "type": "object",
+              "title": "DocumentSignatureDto",
+              "properties": {
+                "documentId": {
+                  "type": "integer",
+                  "format": "int32",
+                  "description": "Unique Document ID"
+                },
+                "accountNo": {
+                  "type": "string",
+                  "description": "Account Number associated with this signature document"
+                },
+                "documentType": {
+                  "type": "string",
+                  "description": "Type of document (e.g. Signature)"
+                },
+                "documentName": {
+                  "type": "string",
+                  "description": "Document Name"
+                },
+                "documentUrl": {
+                  "type": "string",
+                  "description": "External or Storage URL of the document"
+                },
+                "createdDate": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Timestamp when document was created"
+                },
+                "fileDataBase64": {
+                  "type": "string",
+                  "description": "Base64 encoded file attachment content wrapped inside standard JSON object for Nintex database buffer processing"
+                },
+                "fileName": {
+                  "type": "string",
+                  "description": "Original filename for Nintex binary file creation"
+                },
+                "contentType": {
+                  "type": "string",
+                  "description": "MIME Content Type (e.g. image/png, application/pdf)"
+                }
+              }
             }
           }
         }
@@ -76,75 +147,58 @@
   "definitions": {
     "AccountDto": {
       "type": "object",
-      "description": "Represents the Account and Customer information returned to Nintex / API clients.",
       "properties": {
         "accountNo": {
-          "type": "string",
-          "description": "Unique Account Number"
+          "type": "string"
         },
         "customerId": {
-          "type": "string",
-          "description": "Customer Identifier"
+          "type": "string"
         },
         "customerName": {
-          "type": "string",
-          "description": "Full Name of the Customer"
+          "type": "string"
         },
         "accountType": {
-          "type": "string",
-          "description": "Type of Account (e.g. Savings, Checking, Corporate)"
+          "type": "string"
         },
         "accountStatus": {
-          "type": "string",
-          "description": "Current status of the Account (e.g. Active, Pending, Suspended)"
+          "type": "string"
         },
         "branch": {
-          "type": "string",
-          "description": "Branch name where account is registered"
+          "type": "string"
         }
       }
     },
     "DocumentSignatureDto": {
       "type": "object",
-      "description": "Represents the Document Signature record with Base64-encoded binary content wrapped in a standard JSON object for Nintex mapping.",
       "properties": {
         "documentId": {
           "type": "integer",
-          "format": "int32",
-          "description": "Unique Document ID"
+          "format": "int32"
         },
         "accountNo": {
-          "type": "string",
-          "description": "Account Number associated with this signature document"
+          "type": "string"
         },
         "documentType": {
-          "type": "string",
-          "description": "Type of document (e.g. Signature)"
+          "type": "string"
         },
         "documentName": {
-          "type": "string",
-          "description": "Document Name"
+          "type": "string"
         },
         "documentUrl": {
-          "type": "string",
-          "description": "External or Storage URL of the document"
+          "type": "string"
         },
         "createdDate": {
           "type": "string",
-          "format": "date-time",
-          "description": "Timestamp when document was created"
+          "format": "date-time"
         },
         "fileDataBase64": {
-          "type": "string",
-          "description": "Base64 encoded file attachment content wrapped inside standard JSON object for Nintex database buffer processing"
+          "type": "string"
         },
         "fileName": {
-          "type": "string",
-          "description": "Original filename for Nintex binary file creation"
+          "type": "string"
         },
         "contentType": {
-          "type": "string",
-          "description": "MIME Content Type (e.g. image/png, application/pdf)"
+          "type": "string"
         }
       }
     }
