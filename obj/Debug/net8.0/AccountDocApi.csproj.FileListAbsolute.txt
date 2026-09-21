@@ -111,3 +111,4 @@ C:\Users\ICT Misr\OneDrive - ICT Misr\Desktop\K2-api\obj\Debug\net8.0\AccountDoc
 C:\Users\ICT Misr\OneDrive - ICT Misr\Desktop\K2-api\obj\Debug\net8.0\AccountDocApi.genruntimeconfig.cache
 C:\Users\ICT Misr\OneDrive - ICT Misr\Desktop\K2-api\obj\Debug\net8.0\ref\AccountDocApi.dll
 C:\Users\ICT Misr\OneDrive - ICT Misr\Desktop\K2-api\obj\Debug\net8.0\AccountDocApi.sourcelink.json
+C:\Users\ICT Misr\OneDrive - ICT Misr\Desktop\K2-api\bin\Debug\net8.0\swagger.json
