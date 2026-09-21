@@ -38,7 +38,6 @@ builder.Services.AddSwaggerGen(c =>
         Description = "REST API for Nintex Workflows to query Customer Accounts and Document Signatures with Base64 encoded file contents."
     });
 
-    // Set the comments path for the Swagger JSON and UI.
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     if (File.Exists(xmlPath))
@@ -49,16 +48,16 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Auto-create database & seed data on startup
+// Initialize Supabase PostgreSQL database tables and seed data
 using (var scope = app.Services.CreateScope())
 {
     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
     try
     {
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        logger.LogInformation("Ensuring PostgreSQL database and tables exist...");
-        await dbContext.Database.EnsureCreatedAsync();
-        logger.LogInformation("Database initialized and seeded successfully.");
+        logger.LogInformation("Initializing PostgreSQL database tables and seed data...");
+        await DbInitializer.InitializeAsync(dbContext);
+        logger.LogInformation("Supabase database tables created and seeded successfully.");
     }
     catch (Exception ex)
     {
@@ -66,18 +65,16 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Enable Swagger in Development & Production for easy testing and Nintex schema mapping
+// Enable Swagger UI
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Account & Document API v1");
-    c.RoutePrefix = string.Empty; // Serve Swagger UI at root (http://localhost:5000/)
+    c.RoutePrefix = string.Empty;
 });
 
 app.UseCors("AllowAll");
-
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
