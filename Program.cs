@@ -44,6 +44,9 @@ builder.Services.AddSwaggerGen(c =>
     {
         c.IncludeXmlComments(xmlPath);
     }
+
+    // Filter out non-200 responses so K2 REST Service Broker expands individual DTO properties instead of fallback 'Memo'
+    c.OperationFilter<K2ResponseFilter>();
 });
 
 var app = builder.Build();
@@ -88,3 +91,16 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+// Custom operation filter for K2 SmartObject field mapping
+public class K2ResponseFilter : Swashbuckle.AspNetCore.SwaggerGen.IOperationFilter
+{
+    public void Apply(OpenApiOperation operation, Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext context)
+    {
+        var non200Keys = operation.Responses.Keys.Where(k => k != "200").ToList();
+        foreach (var key in non200Keys)
+        {
+            operation.Responses.Remove(key);
+        }
+    }
+}

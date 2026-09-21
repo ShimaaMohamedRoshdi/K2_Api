@@ -39,12 +39,6 @@
             "schema": {
               "$ref": "#/definitions/AccountDto"
             }
-          },
-          "404": {
-            "description": "Not Found",
-            "schema": {
-              "$ref": "#/definitions/ProblemDetails"
-            }
           }
         }
       }
@@ -73,12 +67,6 @@
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/DocumentSignatureDto"
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "schema": {
-              "$ref": "#/definitions/ProblemDetails"
             }
           }
         }
@@ -157,27 +145,6 @@
         "contentType": {
           "type": "string",
           "description": "MIME Content Type (e.g. image/png, application/pdf)"
-        }
-      }
-    },
-    "ProblemDetails": {
-      "type": "object",
-      "properties": {
-        "type": {
-          "type": "string"
-        },
-        "title": {
-          "type": "string"
-        },
-        "status": {
-          "type": "integer",
-          "format": "int32"
-        },
-        "detail": {
-          "type": "string"
-        },
-        "instance": {
-          "type": "string"
         }
       }
     }
