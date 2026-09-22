@@ -11,6 +11,13 @@
             <param name="accountNo">The Account Number to look up (e.g. ACC1001)</param>
             <returns>Account details mapped for Nintex integration</returns>
         </member>
+        <member name="M:AccountDocApi.Controllers.DocumentsController.GetAllDocuments(System.String)">
+            <summary>
+            Retrieves an ARRAY list of documents for the specified Account Number with Base64-encoded file content for Nintex / K2 mapping.
+            </summary>
+            <param name="accountNo">The Account Number associated with documents (e.g. ACC1001)</param>
+            <returns>JSON Array of Document metadata and Base64 encoded file strings</returns>
+        </member>
         <member name="M:AccountDocApi.Controllers.DocumentsController.GetSignatureDocument(System.String)">
             <summary>
             Retrieves the Signature document for the specified Account Number with Base64-encoded file content for Nintex mapping.

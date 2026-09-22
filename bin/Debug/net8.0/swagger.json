@@ -43,12 +43,44 @@
         }
       }
     },
+    "/accounts/{accountNo}/documents": {
+      "get": {
+        "tags": [
+          "Documents"
+        ],
+        "summary": "Retrieves an ARRAY list of all documents associated with the Account Number.",
+        "operationId": "GetAllDocuments",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "accountNo",
+            "in": "path",
+            "description": "The Account Number to look up (e.g. ACC1001)",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/DocumentSignatureDto"
+              }
+            }
+          }
+        }
+      }
+    },
     "/accounts/{accountNo}/documents/signature": {
       "get": {
         "tags": [
           "Documents"
         ],
-        "summary": "Retrieves the Signature document for the specified Account Number with Base64-encoded file content for Nintex mapping.",
+        "summary": "Retrieves the Signature document for the specified Account Number.",
         "operationId": "GetSignatureDocument",
         "produces": [
           "application/json"
@@ -117,7 +149,7 @@
         },
         "documentType": {
           "type": "string",
-          "description": "Type of document (e.g. Signature)"
+          "description": "Type of document (e.g. Signature, NationalID)"
         },
         "documentName": {
           "type": "string",
@@ -134,11 +166,11 @@
         },
         "fileDataBase64": {
           "type": "string",
-          "description": "Base64 encoded file attachment content wrapped inside standard JSON object for Nintex database buffer processing"
+          "description": "Base64 encoded file attachment content"
         },
         "fileName": {
           "type": "string",
-          "description": "Original filename for Nintex binary file creation"
+          "description": "Original filename"
         },
         "contentType": {
           "type": "string",
