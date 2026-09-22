@@ -24,6 +24,9 @@
         ],
         "summary": "Get Account by Number",
         "operationId": "GetAccountByNo",
+        "consumes": [
+          "application/json"
+        ],
         "produces": [
           "application/json"
         ],
@@ -39,7 +42,29 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/AccountDto"
+              "type": "object",
+              "title": "AccountDto",
+              "$ref": "#/definitions/AccountDto",
+              "properties": {
+                "accountNo": {
+                  "type": "string"
+                },
+                "customerId": {
+                  "type": "string"
+                },
+                "customerName": {
+                  "type": "string"
+                },
+                "accountType": {
+                  "type": "string"
+                },
+                "accountStatus": {
+                  "type": "string"
+                },
+                "branch": {
+                  "type": "string"
+                }
+              }
             }
           }
         }
@@ -52,6 +77,9 @@
         ],
         "summary": "Get Document Signature",
         "operationId": "GetSignatureDocument",
+        "consumes": [
+          "application/json"
+        ],
         "produces": [
           "application/json"
         ],
@@ -67,7 +95,40 @@
           "200": {
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/DocumentSignatureDto"
+              "type": "object",
+              "title": "DocumentSignatureDto",
+              "$ref": "#/definitions/DocumentSignatureDto",
+              "properties": {
+                "documentId": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "accountNo": {
+                  "type": "string"
+                },
+                "documentType": {
+                  "type": "string"
+                },
+                "documentName": {
+                  "type": "string"
+                },
+                "documentUrl": {
+                  "type": "string"
+                },
+                "createdDate": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "fileDataBase64": {
+                  "type": "string"
+                },
+                "fileName": {
+                  "type": "string"
+                },
+                "contentType": {
+                  "type": "string"
+                }
+              }
             }
           }
         }
@@ -76,6 +137,7 @@
   },
   "definitions": {
     "AccountDto": {
+      "title": "AccountDto",
       "type": "object",
       "properties": {
         "accountNo": {
@@ -99,6 +161,7 @@
       }
     },
     "DocumentSignatureDto": {
+      "title": "DocumentSignatureDto",
       "type": "object",
       "properties": {
         "documentId": {
