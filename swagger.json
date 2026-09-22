@@ -1,33 +1,34 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "Account & Document Integration API",
-    "description": "Optimized REST API for Nintex K2 SmartObjects - Individual Fields Resolution",
-    "version": "1.0.0"
+    "title": "Account & Document Integration API (Nintex Compatible)",
+    "description": "REST API for Nintex Workflows to query Customer Accounts and Document Signatures with Base64 encoded file contents.",
+    "version": "v1"
   },
-  "host": "yourdomain.com",
-  "basePath": "/",
+  "host": "kyc.runasp.net",
+  "basePath": "/api",
   "schemes": [
     "https"
-  ],
-  "consumes": [
-    "application/json"
   ],
   "produces": [
     "application/json"
   ],
   "paths": {
-    "/api/accounts/{accountNo}": {
+    "/Accounts/{accountNo}": {
       "get": {
         "tags": [
           "Accounts"
         ],
-        "summary": "Get Account by Number",
+        "summary": "Retrieves Account and Customer information for a given Account Number.",
         "operationId": "GetAccountByNo",
+        "produces": [
+          "application/json"
+        ],
         "parameters": [
           {
             "name": "accountNo",
             "in": "path",
+            "description": "The Account Number to look up (e.g. ACC1001)",
             "required": true,
             "type": "string"
           }
@@ -42,17 +43,21 @@
         }
       }
     },
-    "/api/accounts/{accountNo}/documents/signature": {
+    "/accounts/{accountNo}/documents/signature": {
       "get": {
         "tags": [
           "Documents"
         ],
-        "summary": "Get Document Signature",
+        "summary": "Retrieves the Signature document for the specified Account Number with Base64-encoded file content for Nintex mapping.",
         "operationId": "GetSignatureDocument",
+        "produces": [
+          "application/json"
+        ],
         "parameters": [
           {
             "name": "accountNo",
             "in": "path",
+            "description": "The Account Number associated with the signature document (e.g. ACC1001)",
             "required": true,
             "type": "string"
           }
@@ -71,65 +76,73 @@
   "definitions": {
     "AccountDto": {
       "type": "object",
-      "required": [
-        "AccountNo"
-      ],
       "properties": {
-        "AccountNo": {
-          "type": "string"
+        "accountNo": {
+          "type": "string",
+          "description": "Unique Account Number"
         },
-        "CustomerId": {
-          "type": "string"
+        "customerId": {
+          "type": "string",
+          "description": "Customer Identifier"
         },
-        "CustomerName": {
-          "type": "string"
+        "customerName": {
+          "type": "string",
+          "description": "Full Name of the Customer"
         },
-        "AccountType": {
-          "type": "string"
+        "accountType": {
+          "type": "string",
+          "description": "Type of Account (e.g. Savings, Checking, Corporate)"
         },
-        "AccountStatus": {
-          "type": "string"
+        "accountStatus": {
+          "type": "string",
+          "description": "Current status of the Account (e.g. Active, Pending, Suspended)"
         },
-        "Branch": {
-          "type": "string"
+        "branch": {
+          "type": "string",
+          "description": "Branch name where account is registered"
         }
       }
     },
     "DocumentSignatureDto": {
       "type": "object",
-      "required": [
-        "DocumentId",
-        "AccountNo"
-      ],
       "properties": {
-        "DocumentId": {
+        "documentId": {
           "type": "integer",
-          "format": "int32"
+          "format": "int32",
+          "description": "Unique Document ID"
         },
-        "AccountNo": {
-          "type": "string"
-        },
-        "DocumentType": {
-          "type": "string"
-        },
-        "DocumentName": {
-          "type": "string"
-        },
-        "DocumentUrl": {
-          "type": "string"
-        },
-        "CreatedDate": {
+        "accountNo": {
           "type": "string",
-          "format": "date-time"
+          "description": "Account Number associated with this signature document"
         },
-        "FileDataBase64": {
-          "type": "string"
+        "documentType": {
+          "type": "string",
+          "description": "Type of document (e.g. Signature)"
         },
-        "FileName": {
-          "type": "string"
+        "documentName": {
+          "type": "string",
+          "description": "Document Name"
         },
-        "ContentType": {
-          "type": "string"
+        "documentUrl": {
+          "type": "string",
+          "description": "External or Storage URL of the document"
+        },
+        "createdDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when document was created"
+        },
+        "fileDataBase64": {
+          "type": "string",
+          "description": "Base64 encoded file attachment content wrapped inside standard JSON object for Nintex database buffer processing"
+        },
+        "fileName": {
+          "type": "string",
+          "description": "Original filename for Nintex binary file creation"
+        },
+        "contentType": {
+          "type": "string",
+          "description": "MIME Content Type (e.g. image/png, application/pdf)"
         }
       }
     }

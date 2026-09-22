@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace AccountDocApi.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [Produces("application/json")]
     public class AccountsController : ControllerBase
     {

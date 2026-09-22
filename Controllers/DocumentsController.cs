@@ -8,7 +8,7 @@ using System;
 namespace AccountDocApi.Controllers
 {
     [ApiController]
-    [Route("api/accounts/{accountNo}/documents")]
+    [Route("accounts/{accountNo}/documents")]
     [Produces("application/json")]
     public class DocumentsController : ControllerBase
     {

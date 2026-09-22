@@ -45,6 +45,9 @@ builder.Services.AddSwaggerGen(c =>
         c.IncludeXmlComments(xmlPath);
     }
 
+    // Remove 'additionalProperties: false' constraint for K2 compatibility
+    c.SchemaFilter<RemoveAdditionalPropertiesSchemaFilter>();
+
     // Filter out non-200 responses so K2 REST Service Broker expands individual DTO properties instead of fallback 'Memo'
     c.OperationFilter<K2ResponseFilter>();
 });
@@ -76,7 +79,7 @@ app.UseSwagger(c =>
     {
         swaggerDoc.Servers = new List<OpenApiServer>
         {
-            new OpenApiServer { Url = "https://yourdomain.com/api" }
+            new OpenApiServer { Url = "https://kyc.runasp.net/api" }
         };
     });
 });
@@ -91,6 +94,16 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+// Custom schema filter to remove 'additionalProperties: false' for K2 compatibility
+public class RemoveAdditionalPropertiesSchemaFilter : Swashbuckle.AspNetCore.SwaggerGen.ISchemaFilter
+{
+    public void Apply(OpenApiSchema schema, Swashbuckle.AspNetCore.SwaggerGen.SchemaFilterContext context)
+    {
+        schema.AdditionalPropertiesAllowed = true;
+        schema.AdditionalProperties = null;
+    }
+}
 
 // Custom operation filter for K2 SmartObject field mapping
 public class K2ResponseFilter : Swashbuckle.AspNetCore.SwaggerGen.IOperationFilter
