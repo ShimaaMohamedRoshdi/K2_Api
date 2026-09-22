@@ -6,9 +6,9 @@
     "version": "v1"
   },
   "host": "kyc.runasp.net",
-  "basePath": "/api",
+  "basePath": "/",
   "schemes": [
-    "https"
+    "http"
   ],
   "produces": [
     "application/json"

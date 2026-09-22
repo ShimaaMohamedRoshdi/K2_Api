@@ -71,15 +71,16 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Enable Swagger UI with Swagger 2.0 spec for Nintex/K2 compatibility
+// Enable Swagger UI with Swagger 2.0 spec for Nintex/K2 compatibility over HTTP with root basePath '/'
 app.UseSwagger(c =>
 {
     c.SerializeAsV2 = true;
     c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
     {
+        var host = httpReq.Host.HasValue ? httpReq.Host.Value : "kyc.runasp.net";
         swaggerDoc.Servers = new List<OpenApiServer>
         {
-            new OpenApiServer { Url = "https://kyc.runasp.net/api" }
+            new OpenApiServer { Url = $"http://{host}" }
         };
     });
 });
