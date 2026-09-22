@@ -6,7 +6,7 @@
     "version": "1.0.0"
   },
   "host": "yourdomain.com",
-  "basePath": "/api",
+  "basePath": "/",
   "schemes": [
     "https"
   ],
@@ -17,16 +17,13 @@
     "application/json"
   ],
   "paths": {
-    "/Accounts/{accountNo}": {
+    "/api/Accounts/{accountNo}": {
       "get": {
         "tags": [
           "Accounts"
         ],
-        "summary": "Retrieves Account details",
+        "summary": "Get Account by Number",
         "operationId": "GetAccountByNo",
-        "consumes": [
-          "application/json"
-        ],
         "produces": [
           "application/json"
         ],
@@ -34,7 +31,6 @@
           {
             "name": "accountNo",
             "in": "path",
-            "description": "Account Number",
             "required": true,
             "type": "string"
           }
@@ -49,16 +45,13 @@
         }
       }
     },
-    "/accounts/{accountNo}/documents/signature": {
+    "/api/accounts/{accountNo}/documents/signature": {
       "get": {
         "tags": [
           "Documents"
         ],
-        "summary": "Retrieves Document Signature",
+        "summary": "Get Document Signature",
         "operationId": "GetSignatureDocument",
-        "consumes": [
-          "application/json"
-        ],
         "produces": [
           "application/json"
         ],
@@ -66,7 +59,6 @@
           {
             "name": "accountNo",
             "in": "path",
-            "description": "Account Number",
             "required": true,
             "type": "string"
           }
@@ -84,85 +76,59 @@
   },
   "definitions": {
     "AccountDto": {
-      "title": "AccountDto",
       "type": "object",
-      "required": [
-        "accountNo",
-        "customerId",
-        "customerName"
-      ],
       "properties": {
-        "accountNo": {
-          "type": "string",
-          "description": "Unique Account Number"
+        "AccountNo": {
+          "type": "string"
         },
-        "customerId": {
-          "type": "string",
-          "description": "Customer Identifier"
+        "CustomerId": {
+          "type": "string"
         },
-        "customerName": {
-          "type": "string",
-          "description": "Full Name of the Customer"
+        "CustomerName": {
+          "type": "string"
         },
-        "accountType": {
-          "type": "string",
-          "description": "Type of Account"
+        "AccountType": {
+          "type": "string"
         },
-        "accountStatus": {
-          "type": "string",
-          "description": "Current status of the Account"
+        "AccountStatus": {
+          "type": "string"
         },
-        "branch": {
-          "type": "string",
-          "description": "Branch name"
+        "Branch": {
+          "type": "string"
         }
       }
     },
     "DocumentSignatureDto": {
-      "title": "DocumentSignatureDto",
       "type": "object",
-      "required": [
-        "documentId",
-        "accountNo"
-      ],
       "properties": {
-        "documentId": {
+        "DocumentId": {
           "type": "integer",
-          "format": "int32",
-          "description": "Unique Document ID"
+          "format": "int32"
         },
-        "accountNo": {
-          "type": "string",
-          "description": "Account Number"
+        "AccountNo": {
+          "type": "string"
         },
-        "documentType": {
-          "type": "string",
-          "description": "Type of document"
+        "DocumentType": {
+          "type": "string"
         },
-        "documentName": {
-          "type": "string",
-          "description": "Document Name"
+        "DocumentName": {
+          "type": "string"
         },
-        "documentUrl": {
-          "type": "string",
-          "description": "Document URL"
+        "DocumentUrl": {
+          "type": "string"
         },
-        "createdDate": {
+        "CreatedDate": {
           "type": "string",
-          "format": "date-time",
-          "description": "Timestamp created"
+          "format": "date-time"
         },
-        "fileDataBase64": {
-          "type": "string",
-          "description": "Base64 encoded file content"
+        "FileDataBase64": {
+          "type": "string"
         },
-        "fileName": {
-          "type": "string",
-          "description": "Original filename"
+        "FileName": {
+          "type": "string"
         },
-        "contentType": {
-          "type": "string",
-          "description": "MIME Content Type"
+        "ContentType": {
+          "type": "string"
         }
       }
     }
