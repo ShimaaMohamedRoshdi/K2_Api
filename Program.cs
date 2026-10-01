@@ -96,13 +96,23 @@ app.MapControllers();
 
 app.Run();
 
-// Custom schema filter to remove 'additionalProperties: false' for K2 compatibility
+// Custom schema filter to remove 'additionalProperties: false' for K2 compatibility and set default examples
 public class RemoveAdditionalPropertiesSchemaFilter : Swashbuckle.AspNetCore.SwaggerGen.ISchemaFilter
 {
     public void Apply(OpenApiSchema schema, Swashbuckle.AspNetCore.SwaggerGen.SchemaFilterContext context)
     {
         schema.AdditionalPropertiesAllowed = true;
         schema.AdditionalProperties = null;
+
+        if (context.Type == typeof(AccountDocApi.DTOs.DocumentBase64UploadDto))
+        {
+            schema.Example = new Microsoft.OpenApi.Any.OpenApiObject
+            {
+                ["fileDataBase64"] = new Microsoft.OpenApi.Any.OpenApiString("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="),
+                ["fileName"] = new Microsoft.OpenApi.Any.OpenApiString("NationalID_ACC1002.png"),
+                ["documentType"] = new Microsoft.OpenApi.Any.OpenApiString("NationalID")
+            };
+        }
     }
 }
 
