@@ -25,6 +25,40 @@
             <param name="accountNo">The Account Number associated with the signature document (e.g. ACC1001)</param>
             <returns>JSON object containing Document metadata and Base64 encoded file string</returns>
         </member>
+        <member name="M:AccountDocApi.Controllers.DocumentsController.UploadDocument(System.String,AccountDocApi.DTOs.DocumentUploadDto)">
+            <summary>
+            Uploads a new document file for the specified Account Number (Swagger form-data file picker supported).
+            Stores binary content in PostgreSQL database.
+            </summary>
+            <param name="accountNo">The Account Number (e.g. ACC1001)</param>
+            <param name="uploadDto">Document file and metadata</param>
+            <returns>Saved Document record metadata and Base64 string</returns>
+        </member>
+        <member name="M:AccountDocApi.Controllers.DocumentsController.UploadDocumentBase64(System.String,AccountDocApi.DTOs.DocumentBase64UploadDto)">
+            <summary>
+            Uploads a new document for the specified Account Number via Base64 JSON payload.
+            Stores binary content in PostgreSQL database.
+            </summary>
+            <param name="accountNo">The Account Number (e.g. ACC1001)</param>
+            <param name="dto">Base64 encoded file string and metadata</param>
+            <returns>Saved Document record metadata and Base64 string</returns>
+        </member>
+        <member name="M:AccountDocApi.Controllers.DocumentsController.GetDocumentById(System.String,System.Int32)">
+            <summary>
+            Retrieves a specific document by its Document ID.
+            </summary>
+            <param name="accountNo">The Account Number (e.g. ACC1001)</param>
+            <param name="documentId">The unique Document ID</param>
+            <returns>Document metadata and Base64 encoded file string</returns>
+        </member>
+        <member name="M:AccountDocApi.Controllers.DocumentsController.DownloadDocumentFile(System.String,System.Int32)">
+            <summary>
+            Downloads the raw binary file for a document by Document ID.
+            </summary>
+            <param name="accountNo">The Account Number (e.g. ACC1001)</param>
+            <param name="documentId">The unique Document ID</param>
+            <returns>Binary file stream</returns>
+        </member>
         <member name="T:AccountDocApi.DTOs.AccountDto">
             <summary>
             Represents the Account and Customer information returned to Nintex / API clients.
@@ -58,6 +92,26 @@
         <member name="P:AccountDocApi.DTOs.AccountDto.Branch">
             <summary>
             Branch name where account is registered
+            </summary>
+        </member>
+        <member name="T:AccountDocApi.DTOs.DocumentBase64UploadDto">
+            <summary>
+            Model for uploading a document via JSON payload with Base64 encoded string
+            </summary>
+        </member>
+        <member name="P:AccountDocApi.DTOs.DocumentBase64UploadDto.FileDataBase64">
+            <summary>
+            Base64 encoded file content
+            </summary>
+        </member>
+        <member name="P:AccountDocApi.DTOs.DocumentBase64UploadDto.FileName">
+            <summary>
+            File name (e.g. document.pdf, signature.png)
+            </summary>
+        </member>
+        <member name="P:AccountDocApi.DTOs.DocumentBase64UploadDto.DocumentType">
+            <summary>
+            Type of document (e.g. Signature, NationalID, Passport, General)
             </summary>
         </member>
         <member name="T:AccountDocApi.DTOs.DocumentSignatureDto">
@@ -108,6 +162,26 @@
         <member name="P:AccountDocApi.DTOs.DocumentSignatureDto.ContentType">
             <summary>
             MIME Content Type (e.g. image/png, application/pdf)
+            </summary>
+        </member>
+        <member name="T:AccountDocApi.DTOs.DocumentUploadDto">
+            <summary>
+            Model for uploading a document file via form-data (Swagger / HTTP Form)
+            </summary>
+        </member>
+        <member name="P:AccountDocApi.DTOs.DocumentUploadDto.File">
+            <summary>
+            The file to upload (e.g. PDF, PNG, JPG)
+            </summary>
+        </member>
+        <member name="P:AccountDocApi.DTOs.DocumentUploadDto.DocumentType">
+            <summary>
+            Type of document (e.g. Signature, NationalID, Passport, Contract, General)
+            </summary>
+        </member>
+        <member name="P:AccountDocApi.DTOs.DocumentUploadDto.DocumentName">
+            <summary>
+            Optional document name. If left blank, the original filename of the uploaded file will be used.
             </summary>
         </member>
         <member name="P:AccountDocApi.Models.Document.FileContent">

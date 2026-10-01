@@ -153,12 +153,294 @@ namespace AccountDocApi.Controllers
             return Ok(dto);
         }
 
+        /// <summary>
+        /// Uploads a new document file for the specified Account Number (Swagger form-data file picker supported).
+        /// Stores binary content in PostgreSQL database.
+        /// </summary>
+        /// <param name="accountNo">The Account Number (e.g. ACC1001)</param>
+        /// <param name="uploadDto">Document file and metadata</param>
+        /// <returns>Saved Document record metadata and Base64 string</returns>
+        [HttpPost("upload")]
+        [Consumes("multipart/form-data")]
+        [ProducesResponseType(typeof(DocumentSignatureDto), StatusCodes.Status200OK)]
+        public async Task<ActionResult<DocumentSignatureDto>> UploadDocument(
+            string accountNo,
+            [FromForm] DocumentUploadDto uploadDto)
+        {
+            if (uploadDto.File == null || uploadDto.File.Length == 0)
+            {
+                return BadRequest(new { message = "Please select a valid non-empty file to upload." });
+            }
+
+            var cleanAccountNo = string.IsNullOrWhiteSpace(accountNo) ? "ACC1001" : accountNo.Trim().ToUpper();
+
+            // Ensure Account exists in Accounts table to prevent Foreign Key constraint error
+            try
+            {
+                var accountExists = await _context.Accounts
+                    .AnyAsync(a => a.AccountNo.ToLower() == cleanAccountNo.ToLower());
+
+                if (!accountExists)
+                {
+                    var newAccount = new Account
+                    {
+                        AccountNo = cleanAccountNo,
+                        CustomerId = $"CUST-{cleanAccountNo}",
+                        CustomerName = $"Customer {cleanAccountNo}",
+                        AccountType = "Savings",
+                        AccountStatus = "Active",
+                        Branch = "Main Branch"
+                    };
+                    _context.Accounts.Add(newAccount);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch
+            {
+                // Proceed if table check fails
+            }
+
+            byte[] fileBytes;
+            using (var memoryStream = new System.IO.MemoryStream())
+            {
+                await uploadDto.File.CopyToAsync(memoryStream);
+                fileBytes = memoryStream.ToArray();
+            }
+
+            var fileName = !string.IsNullOrWhiteSpace(uploadDto.DocumentName)
+                ? uploadDto.DocumentName.Trim()
+                : uploadDto.File.FileName;
+
+            var docType = !string.IsNullOrWhiteSpace(uploadDto.DocumentType)
+                ? uploadDto.DocumentType.Trim()
+                : "General";
+
+            var doc = new Document
+            {
+                AccountNo = cleanAccountNo,
+                DocumentType = docType,
+                DocumentName = fileName,
+                DocumentUrl = $"https://kyc.runasp.net/api/accounts/{cleanAccountNo}/documents",
+                CreatedDate = DateTime.UtcNow,
+                FileContent = fileBytes
+            };
+
+            try
+            {
+                _context.Documents.Add(doc);
+                await _context.SaveChangesAsync();
+
+                doc.DocumentUrl = $"https://kyc.runasp.net/api/accounts/{cleanAccountNo}/documents/{doc.DocumentId}";
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new { message = "Error saving document to database", error = ex.Message });
+            }
+
+            var base64 = Convert.ToBase64String(fileBytes);
+
+            var dto = new DocumentSignatureDto
+            {
+                DocumentId = doc.DocumentId,
+                AccountNo = cleanAccountNo,
+                DocumentType = doc.DocumentType,
+                DocumentName = doc.DocumentName,
+                DocumentUrl = doc.DocumentUrl,
+                CreatedDate = doc.CreatedDate,
+                FileDataBase64 = base64,
+                FileName = doc.DocumentName,
+                ContentType = GetContentType(doc.DocumentName)
+            };
+
+            return Ok(dto);
+        }
+
+        /// <summary>
+        /// Uploads a new document for the specified Account Number via Base64 JSON payload.
+        /// Stores binary content in PostgreSQL database.
+        /// </summary>
+        /// <param name="accountNo">The Account Number (e.g. ACC1001)</param>
+        /// <param name="dto">Base64 encoded file string and metadata</param>
+        /// <returns>Saved Document record metadata and Base64 string</returns>
+        [HttpPost("upload-base64")]
+        [ProducesResponseType(typeof(DocumentSignatureDto), StatusCodes.Status200OK)]
+        public async Task<ActionResult<DocumentSignatureDto>> UploadDocumentBase64(
+            string accountNo,
+            [FromBody] DocumentBase64UploadDto dto)
+        {
+            if (dto == null || string.IsNullOrWhiteSpace(dto.FileDataBase64))
+            {
+                return BadRequest(new { message = "FileDataBase64 field is required." });
+            }
+
+            byte[] fileBytes;
+            try
+            {
+                fileBytes = Convert.FromBase64String(dto.FileDataBase64);
+            }
+            catch (FormatException)
+            {
+                return BadRequest(new { message = "Invalid Base64 string encoding." });
+            }
+
+            var cleanAccountNo = string.IsNullOrWhiteSpace(accountNo) ? "ACC1001" : accountNo.Trim().ToUpper();
+
+            try
+            {
+                var accountExists = await _context.Accounts
+                    .AnyAsync(a => a.AccountNo.ToLower() == cleanAccountNo.ToLower());
+
+                if (!accountExists)
+                {
+                    var newAccount = new Account
+                    {
+                        AccountNo = cleanAccountNo,
+                        CustomerId = $"CUST-{cleanAccountNo}",
+                        CustomerName = $"Customer {cleanAccountNo}",
+                        AccountType = "Savings",
+                        AccountStatus = "Active",
+                        Branch = "Main Branch"
+                    };
+                    _context.Accounts.Add(newAccount);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch
+            {
+            }
+
+            var fileName = !string.IsNullOrWhiteSpace(dto.FileName) ? dto.FileName.Trim() : "UploadedDocument.bin";
+            var docType = !string.IsNullOrWhiteSpace(dto.DocumentType) ? dto.DocumentType.Trim() : "General";
+
+            var doc = new Document
+            {
+                AccountNo = cleanAccountNo,
+                DocumentType = docType,
+                DocumentName = fileName,
+                DocumentUrl = $"https://kyc.runasp.net/api/accounts/{cleanAccountNo}/documents",
+                CreatedDate = DateTime.UtcNow,
+                FileContent = fileBytes
+            };
+
+            try
+            {
+                _context.Documents.Add(doc);
+                await _context.SaveChangesAsync();
+
+                doc.DocumentUrl = $"https://kyc.runasp.net/api/accounts/{cleanAccountNo}/documents/{doc.DocumentId}";
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                    new { message = "Error saving document to database", error = ex.Message });
+            }
+
+            var responseDto = new DocumentSignatureDto
+            {
+                DocumentId = doc.DocumentId,
+                AccountNo = cleanAccountNo,
+                DocumentType = doc.DocumentType,
+                DocumentName = doc.DocumentName,
+                DocumentUrl = doc.DocumentUrl,
+                CreatedDate = doc.CreatedDate,
+                FileDataBase64 = dto.FileDataBase64,
+                FileName = doc.DocumentName,
+                ContentType = GetContentType(doc.DocumentName)
+            };
+
+            return Ok(responseDto);
+        }
+
+        /// <summary>
+        /// Retrieves a specific document by its Document ID.
+        /// </summary>
+        /// <param name="accountNo">The Account Number (e.g. ACC1001)</param>
+        /// <param name="documentId">The unique Document ID</param>
+        /// <returns>Document metadata and Base64 encoded file string</returns>
+        [HttpGet("{documentId:int}")]
+        [ProducesResponseType(typeof(DocumentSignatureDto), StatusCodes.Status200OK)]
+        public async Task<ActionResult<DocumentSignatureDto>> GetDocumentById(string accountNo, int documentId)
+        {
+            var cleanAccountNo = string.IsNullOrWhiteSpace(accountNo) ? "ACC1001" : accountNo.Trim();
+
+            Document? doc = null;
+            try
+            {
+                doc = await _context.Documents
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(d => d.DocumentId == documentId && d.AccountNo.ToLower() == cleanAccountNo.ToLower());
+            }
+            catch
+            {
+            }
+
+            if (doc == null)
+            {
+                return NotFound(new { message = $"Document with ID {documentId} for account '{cleanAccountNo}' was not found." });
+            }
+
+            string base64 = (doc.FileContent != null && doc.FileContent.Length > 0)
+                ? Convert.ToBase64String(doc.FileContent)
+                : string.Empty;
+
+            var dto = new DocumentSignatureDto
+            {
+                DocumentId = doc.DocumentId,
+                AccountNo = cleanAccountNo.ToUpper(),
+                DocumentType = doc.DocumentType,
+                DocumentName = doc.DocumentName,
+                DocumentUrl = doc.DocumentUrl ?? $"https://kyc.runasp.net/api/accounts/{cleanAccountNo}/documents/{doc.DocumentId}",
+                CreatedDate = doc.CreatedDate,
+                FileDataBase64 = base64,
+                FileName = doc.DocumentName,
+                ContentType = GetContentType(doc.DocumentName)
+            };
+
+            return Ok(dto);
+        }
+
+        /// <summary>
+        /// Downloads the raw binary file for a document by Document ID.
+        /// </summary>
+        /// <param name="accountNo">The Account Number (e.g. ACC1001)</param>
+        /// <param name="documentId">The unique Document ID</param>
+        /// <returns>Binary file stream</returns>
+        [HttpGet("{documentId:int}/download")]
+        public async Task<IActionResult> DownloadDocumentFile(string accountNo, int documentId)
+        {
+            var cleanAccountNo = string.IsNullOrWhiteSpace(accountNo) ? "ACC1001" : accountNo.Trim();
+
+            Document? doc = null;
+            try
+            {
+                doc = await _context.Documents
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(d => d.DocumentId == documentId && d.AccountNo.ToLower() == cleanAccountNo.ToLower());
+            }
+            catch
+            {
+            }
+
+            if (doc == null || doc.FileContent == null || doc.FileContent.Length == 0)
+            {
+                return NotFound(new { message = $"File content for Document ID {documentId} was not found." });
+            }
+
+            var contentType = GetContentType(doc.DocumentName);
+            return File(doc.FileContent, contentType, doc.DocumentName);
+        }
+
         private static string GetContentType(string filename)
         {
             if (string.IsNullOrEmpty(filename)) return "application/octet-stream";
             if (filename.EndsWith(".png", StringComparison.OrdinalIgnoreCase)) return "image/png";
-            if (filename.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) || filename.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase)) return "image/png";
+            if (filename.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) || filename.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase)) return "image/jpeg";
             if (filename.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase)) return "application/pdf";
+            if (filename.EndsWith(".txt", StringComparison.OrdinalIgnoreCase)) return "text/plain";
+            if (filename.EndsWith(".doc", StringComparison.OrdinalIgnoreCase) || filename.EndsWith(".docx", StringComparison.OrdinalIgnoreCase)) return "application/msword";
             return "application/octet-stream";
         }
     }
