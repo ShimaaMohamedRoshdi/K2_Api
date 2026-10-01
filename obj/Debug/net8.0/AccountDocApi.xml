@@ -101,18 +101,21 @@
         </member>
         <member name="P:AccountDocApi.DTOs.DocumentBase64UploadDto.FileDataBase64">
             <summary>
-            Base64 encoded file content
+            Base64 encoded file content string
             </summary>
+            <example>iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==</example>
         </member>
         <member name="P:AccountDocApi.DTOs.DocumentBase64UploadDto.FileName">
             <summary>
             File name (e.g. document.pdf, signature.png)
             </summary>
+            <example>NationalID_ACC1001.png</example>
         </member>
         <member name="P:AccountDocApi.DTOs.DocumentBase64UploadDto.DocumentType">
             <summary>
             Type of document (e.g. Signature, NationalID, Passport, General)
             </summary>
+            <example>NationalID</example>
         </member>
         <member name="T:AccountDocApi.DTOs.DocumentSignatureDto">
             <summary>
