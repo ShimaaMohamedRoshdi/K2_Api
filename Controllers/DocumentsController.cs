@@ -177,10 +177,14 @@ namespace AccountDocApi.Controllers
             // Ensure Account exists in Accounts table to prevent Foreign Key constraint error
             try
             {
-                var accountExists = await _context.Accounts
-                    .AnyAsync(a => a.AccountNo.ToLower() == cleanAccountNo.ToLower());
+                var existingAccount = await _context.Accounts
+                    .FirstOrDefaultAsync(a => a.AccountNo.ToLower() == cleanAccountNo.ToLower());
 
-                if (!accountExists)
+                if (existingAccount != null)
+                {
+                    cleanAccountNo = existingAccount.AccountNo;
+                }
+                else
                 {
                     var newAccount = new Account
                     {
@@ -233,10 +237,28 @@ namespace AccountDocApi.Controllers
                 doc.DocumentUrl = $"https://kyc.runasp.net/api/accounts/{cleanAccountNo}/documents/{doc.DocumentId}";
                 await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    new { message = "Error saving document to database", error = ex.Message });
+                try
+                {
+                    // Auto-fix PostgreSQL identity sequence if it fell behind seeded IDs
+                    var fixSequenceSql = @"SELECT setval(pg_get_serial_sequence('""Documents""', 'DocumentId'), COALESCE((SELECT MAX(""DocumentId"") FROM ""Documents""), 1));";
+                    await _context.Database.ExecuteSqlRawAsync(fixSequenceSql);
+
+                    _context.Entry(doc).State = EntityState.Detached;
+                    doc.DocumentId = 0;
+                    _context.Documents.Add(doc);
+                    await _context.SaveChangesAsync();
+
+                    doc.DocumentUrl = $"https://kyc.runasp.net/api/accounts/{cleanAccountNo}/documents/{doc.DocumentId}";
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    var detailedError = ex.InnerException != null ? $"{ex.Message} -> {ex.InnerException.Message}" : ex.Message;
+                    return StatusCode(StatusCodes.Status500InternalServerError,
+                        new { message = "Error saving document to database", error = detailedError });
+                }
             }
 
             var base64 = Convert.ToBase64String(fileBytes);
@@ -289,10 +311,14 @@ namespace AccountDocApi.Controllers
 
             try
             {
-                var accountExists = await _context.Accounts
-                    .AnyAsync(a => a.AccountNo.ToLower() == cleanAccountNo.ToLower());
+                var existingAccount = await _context.Accounts
+                    .FirstOrDefaultAsync(a => a.AccountNo.ToLower() == cleanAccountNo.ToLower());
 
-                if (!accountExists)
+                if (existingAccount != null)
+                {
+                    cleanAccountNo = existingAccount.AccountNo;
+                }
+                else
                 {
                     var newAccount = new Account
                     {
@@ -332,10 +358,27 @@ namespace AccountDocApi.Controllers
                 doc.DocumentUrl = $"https://kyc.runasp.net/api/accounts/{cleanAccountNo}/documents/{doc.DocumentId}";
                 await _context.SaveChangesAsync();
             }
-            catch (Exception ex)
+            catch
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                    new { message = "Error saving document to database", error = ex.Message });
+                try
+                {
+                    var fixSequenceSql = @"SELECT setval(pg_get_serial_sequence('""Documents""', 'DocumentId'), COALESCE((SELECT MAX(""DocumentId"") FROM ""Documents""), 1));";
+                    await _context.Database.ExecuteSqlRawAsync(fixSequenceSql);
+
+                    _context.Entry(doc).State = EntityState.Detached;
+                    doc.DocumentId = 0;
+                    _context.Documents.Add(doc);
+                    await _context.SaveChangesAsync();
+
+                    doc.DocumentUrl = $"https://kyc.runasp.net/api/accounts/{cleanAccountNo}/documents/{doc.DocumentId}";
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    var detailedError = ex.InnerException != null ? $"{ex.Message} -> {ex.InnerException.Message}" : ex.Message;
+                    return StatusCode(StatusCodes.Status500InternalServerError,
+                        new { message = "Error saving document to database", error = detailedError });
+                }
             }
 
             var responseDto = new DocumentSignatureDto

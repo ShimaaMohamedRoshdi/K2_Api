@@ -112,6 +112,18 @@ namespace AccountDocApi.Data
                 await context.Documents.AddRangeAsync(documents);
                 await context.SaveChangesAsync();
             }
+
+            // Sync PostgreSQL identity sequence for Documents table so auto-increment works after manual seeding
+            try
+            {
+                var fixSequenceSql = @"
+                    SELECT setval(pg_get_serial_sequence('""Documents""', 'DocumentId'), COALESCE((SELECT MAX(""DocumentId"") FROM ""Documents""), 1));
+                ";
+                await context.Database.ExecuteSqlRawAsync(fixSequenceSql);
+            }
+            catch
+            {
+            }
         }
     }
 }
